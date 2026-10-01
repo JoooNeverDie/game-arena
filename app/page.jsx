@@ -1,84 +1,84 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const games = [
   {
     id: "tictactoe",
     title: "Tic Tac Toe",
-    icon: "⭕",
+    icon: "tictactoe",
     category: "Strategi",
     level: "Mudah",
-    description: "Adu tiga simbol sejajar melawan teman di papan klasik 3x3."
+    description: "Adu tiga simbol sejajar di papan klasik 3x3."
   },
   {
     id: "snake",
     title: "Snake",
-    icon: "🐍",
+    icon: "snake",
     category: "Arcade",
     level: "Sedang",
-    description: "Makan buah, perpanjang ekor, dan jangan menabrak dinding."
+    description: "Ambil makanan, panjangkan badan, dan hindari tabrakan."
   },
   {
     id: "memory",
     title: "Memory Match",
-    icon: "🧠",
+    icon: "memory",
     category: "Puzzle",
     level: "Mudah",
-    description: "Buka kartu dan temukan pasangan ikon yang sama."
+    description: "Buka kartu, ingat posisinya, lalu temukan pasangannya."
   },
   {
     id: "guess",
     title: "Tebak Angka",
-    icon: "🔢",
+    icon: "guess",
     category: "Santai",
     level: "Mudah",
-    description: "Cari angka rahasia 1 sampai 100 dengan petunjuk naik atau turun."
+    description: "Cari angka rahasia dengan petunjuk lebih besar atau kecil."
   },
   {
     id: "rps",
     title: "Batu Gunting Kertas",
-    icon: "✊",
+    icon: "rps",
     category: "Cepat",
     level: "Mudah",
-    description: "Main cepat melawan komputer dan kumpulkan skor terbaik."
+    description: "Main satu ronde cepat melawan komputer."
   },
   {
     id: "whack",
     title: "Whack-a-Mole",
-    icon: "🕳️",
+    icon: "whack",
     category: "Refleks",
     level: "Sedang",
-    description: "Klik mole yang muncul sebelum waktunya habis."
+    description: "Pukul target yang muncul sebelum waktunya habis."
   },
   {
     id: "twenty48",
     title: "2048 Mini",
-    icon: "🧩",
+    icon: "twenty48",
     category: "Puzzle",
     level: "Sedang",
-    description: "Geser kotak angka, gabungkan nilai, dan kejar tile 2048."
+    description: "Geser angka, gabungkan tile, dan kejar skor tertinggi."
   },
   {
     id: "mines",
     title: "Minesweeper Lite",
-    icon: "💣",
+    icon: "mines",
     category: "Logika",
     level: "Sedang",
-    description: "Buka petak aman dan hindari ranjau tersembunyi."
+    description: "Buka petak aman tanpa menyentuh ranjau."
   },
   {
     id: "quiz",
     title: "Quiz Cepat",
-    icon: "⚡",
+    icon: "quiz",
     category: "Trivia",
     level: "Mudah",
-    description: "Jawab pertanyaan ringan dan lihat skor akhir kamu."
+    description: "Jawab pertanyaan ringan dan lihat skor akhir."
   },
   {
     id: "scramble",
     title: "Susun Kata",
-    icon: "🔤",
+    icon: "scramble",
     category: "Kata",
     level: "Mudah",
     description: "Tebak kata asli dari huruf yang diacak."
@@ -86,10 +86,10 @@ const games = [
   {
     id: "reaction",
     title: "Tes Refleks",
-    icon: "🎯",
+    icon: "reaction",
     category: "Refleks",
     level: "Mudah",
-    description: "Tunggu warna hijau lalu klik secepat mungkin."
+    description: "Tunggu sinyal hijau, lalu tekan secepat mungkin."
   }
 ];
 
@@ -111,10 +111,265 @@ function cls(...names) {
   return names.filter(Boolean).join(" ");
 }
 
-function PrimaryButton({ children, onClick, type = "button", disabled = false, variant = "" }) {
+function ActionButton({ children, onClick, type = "button", disabled = false, variant = "primary" }) {
   return (
-    <button type={type} onClick={onClick} disabled={disabled} className={cls("btn", variant)}>
+    <button type={type} onClick={onClick} disabled={disabled} className={cls("button", variant)}>
       {children}
+    </button>
+  );
+}
+
+function Svg({ children, className = "", title }) {
+  return (
+    <svg className={cls("svg-icon", className)} viewBox="0 0 64 64" role={title ? "img" : "presentation"} aria-label={title} fill="none">
+      {children}
+    </svg>
+  );
+}
+
+function GameIcon({ name, className = "", title }) {
+  switch (name) {
+    case "portal":
+      return (
+        <Svg className={className} title={title}>
+          <path d="M14 38c-5.5 0-10-4.5-10-10s4.5-10 10-10h36c5.5 0 10 4.5 10 10s-4.5 10-10 10h-5l-5 8-6-8h-4l-6 8-5-8h-5Z" fill="currentColor" opacity="0.12" />
+          <path d="M14 38c-5.5 0-10-4.5-10-10s4.5-10 10-10h36c5.5 0 10 4.5 10 10s-4.5 10-10 10h-5l-5 8-6-8h-4l-6 8-5-8h-5Z" stroke="currentColor" strokeWidth="3" strokeLinejoin="round" />
+          <path d="M18 24v8M14 28h8M45 25h.1M51 31h.1" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
+        </Svg>
+      );
+    case "tictactoe":
+      return (
+        <Svg className={className} title={title}>
+          <path d="M20 8v48M44 8v48M8 20h48M8 44h48" stroke="currentColor" strokeWidth="4" strokeLinecap="round" opacity="0.75" />
+          <path d="M13 12l10 10M23 12 13 22" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
+          <circle cx="32" cy="32" r="6" stroke="currentColor" strokeWidth="4" />
+          <path d="M42 42l10 10M52 42 42 52" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
+        </Svg>
+      );
+    case "snake":
+      return (
+        <Svg className={className} title={title}>
+          <path d="M12 42c0-12 12-12 20-12s20 0 20-12c0-6-5-10-12-10H24" stroke="currentColor" strokeWidth="7" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M22 8 12 18l10 10" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+          <circle cx="48" cy="17" r="2" fill="currentColor" />
+          <rect x="9" y="46" width="46" height="10" rx="5" fill="currentColor" opacity="0.14" />
+        </Svg>
+      );
+    case "memory":
+      return (
+        <Svg className={className} title={title}>
+          <rect x="12" y="16" width="22" height="32" rx="5" fill="currentColor" opacity="0.13" />
+          <rect x="12" y="16" width="22" height="32" rx="5" stroke="currentColor" strokeWidth="3" />
+          <rect x="30" y="12" width="22" height="32" rx="5" fill="currentColor" opacity="0.22" />
+          <rect x="30" y="12" width="22" height="32" rx="5" stroke="currentColor" strokeWidth="3" />
+          <path d="M37 28h8M41 24v8" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+        </Svg>
+      );
+    case "guess":
+      return (
+        <Svg className={className} title={title}>
+          <circle cx="27" cy="27" r="15" fill="currentColor" opacity="0.12" />
+          <circle cx="27" cy="27" r="15" stroke="currentColor" strokeWidth="4" />
+          <path d="M39 39 53 53" stroke="currentColor" strokeWidth="5" strokeLinecap="round" />
+          <path d="M23 23c1.2-3 7.5-3.1 8.4.4.8 3.2-3.7 4.3-4.4 7.1M27 37h.1" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
+        </Svg>
+      );
+    case "rps":
+      return (
+        <Svg className={className} title={title}>
+          <path d="M14 44h36l-6 10H20l-6-10Z" fill="currentColor" opacity="0.14" />
+          <path d="M19 44V26c0-4 6-4 6 0v12-18c0-4 6-4 6 0v18-15c0-4 6-4 6 0v15-10c0-4 6-4 6 0v16" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M43 36h8c2.5 0 4 2.5 2.8 4.7L50 48" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+        </Svg>
+      );
+    case "whack":
+      return (
+        <Svg className={className} title={title}>
+          <ellipse cx="32" cy="48" rx="22" ry="7" fill="currentColor" opacity="0.16" />
+          <circle cx="32" cy="29" r="14" fill="currentColor" opacity="0.12" />
+          <circle cx="32" cy="29" r="14" stroke="currentColor" strokeWidth="4" />
+          <path d="M23 20 18 13M41 20l5-7M27 30h.1M37 30h.1M28 38h8" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
+        </Svg>
+      );
+    case "twenty48":
+      return (
+        <Svg className={className} title={title}>
+          {[10, 30].map((x) =>
+            [10, 30].map((y) => <rect key={`${x}-${y}`} x={x} y={y} width="24" height="24" rx="6" fill="currentColor" opacity={x === 30 && y === 30 ? "0.26" : "0.12"} />)
+          )}
+          <path d="M17 25h7M37 25h10M37 39h10M37 49h10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+          <path d="M20 39v10M16 45h8" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+        </Svg>
+      );
+    case "mines":
+      return (
+        <Svg className={className} title={title}>
+          <circle cx="32" cy="34" r="13" fill="currentColor" opacity="0.14" />
+          <circle cx="32" cy="34" r="13" stroke="currentColor" strokeWidth="4" />
+          <path d="M32 10v8M32 50v6M12 34h7M45 34h7M18 20l5 5M46 20l-5 5M18 48l5-5M46 48l-5-5" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
+          <circle cx="37" cy="28" r="2" fill="currentColor" />
+        </Svg>
+      );
+    case "quiz":
+      return (
+        <Svg className={className} title={title}>
+          <path d="M12 14h40v28H29l-9 8v-8h-8V14Z" fill="currentColor" opacity="0.12" />
+          <path d="M12 14h40v28H29l-9 8v-8h-8V14Z" stroke="currentColor" strokeWidth="4" strokeLinejoin="round" />
+          <path d="M25 25h14M25 33h8" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
+        </Svg>
+      );
+    case "scramble":
+      return (
+        <Svg className={className} title={title}>
+          <rect x="8" y="12" width="18" height="18" rx="5" fill="currentColor" opacity="0.12" />
+          <rect x="38" y="12" width="18" height="18" rx="5" fill="currentColor" opacity="0.18" />
+          <rect x="23" y="34" width="18" height="18" rx="5" fill="currentColor" opacity="0.24" />
+          <path d="M15 25 19 17l4 8M16.5 22h5M44 17h4.5c3 0 3 6 0 6H44m0 0h5c3 0 3 6 0 6H44V17M31 39v8m-3-4h6" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+        </Svg>
+      );
+    case "reaction":
+      return (
+        <Svg className={className} title={title}>
+          <circle cx="32" cy="32" r="22" fill="currentColor" opacity="0.1" />
+          <circle cx="32" cy="32" r="22" stroke="currentColor" strokeWidth="4" />
+          <circle cx="32" cy="32" r="11" stroke="currentColor" strokeWidth="4" />
+          <circle cx="32" cy="32" r="3" fill="currentColor" />
+          <path d="M32 4v9M32 51v9M4 32h9M51 32h9" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
+        </Svg>
+      );
+    case "sun":
+      return (
+        <Svg className={className} title={title}>
+          <circle cx="32" cy="32" r="11" stroke="currentColor" strokeWidth="4" />
+          <path d="M32 8v7M32 49v7M8 32h7M49 32h7M15 15l5 5M44 44l5 5M49 15l-5 5M20 44l-5 5" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
+        </Svg>
+      );
+    case "moon":
+      return (
+        <Svg className={className} title={title}>
+          <path d="M44 43.5A19 19 0 0 1 21 20.6 19 19 0 1 0 44 43.5Z" fill="currentColor" opacity="0.16" />
+          <path d="M44 43.5A19 19 0 0 1 21 20.6 19 19 0 1 0 44 43.5Z" stroke="currentColor" strokeWidth="4" strokeLinejoin="round" />
+        </Svg>
+      );
+    case "rock":
+      return (
+        <Svg className={className} title={title}>
+          <path d="M18 44V28c0-5 7-5 7 0v-5c0-5 7-5 7 0v4c0-5 7-5 7 0v4c0-5 7-5 7 0v13c0 8-6 13-14 13s-14-5-14-13Z" fill="currentColor" opacity="0.12" />
+          <path d="M18 44V28c0-5 7-5 7 0v-5c0-5 7-5 7 0v4c0-5 7-5 7 0v4c0-5 7-5 7 0v13c0 8-6 13-14 13s-14-5-14-13Z" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+        </Svg>
+      );
+    case "paper":
+      return (
+        <Svg className={className} title={title}>
+          <path d="M19 8h19l11 11v37H19V8Z" fill="currentColor" opacity="0.12" />
+          <path d="M19 8h19l11 11v37H19V8Z" stroke="currentColor" strokeWidth="4" strokeLinejoin="round" />
+          <path d="M38 8v12h11M26 31h16M26 40h16" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+        </Svg>
+      );
+    case "scissors":
+      return (
+        <Svg className={className} title={title}>
+          <circle cx="19" cy="45" r="7" fill="currentColor" opacity="0.12" />
+          <circle cx="45" cy="45" r="7" fill="currentColor" opacity="0.12" />
+          <circle cx="19" cy="45" r="7" stroke="currentColor" strokeWidth="4" />
+          <circle cx="45" cy="45" r="7" stroke="currentColor" strokeWidth="4" />
+          <path d="M25 40 49 13M39 40 15 13" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
+        </Svg>
+      );
+    case "orbit":
+      return (
+        <Svg className={className} title={title}>
+          <circle cx="32" cy="32" r="7" fill="currentColor" />
+          <ellipse cx="32" cy="32" rx="23" ry="9" stroke="currentColor" strokeWidth="4" />
+          <ellipse cx="32" cy="32" rx="23" ry="9" stroke="currentColor" strokeWidth="4" transform="rotate(60 32 32)" />
+        </Svg>
+      );
+    case "gem":
+      return (
+        <Svg className={className} title={title}>
+          <path d="M18 13h28l10 14-24 25L8 27l10-14Z" fill="currentColor" opacity="0.14" />
+          <path d="M18 13h28l10 14-24 25L8 27l10-14Z" stroke="currentColor" strokeWidth="4" strokeLinejoin="round" />
+          <path d="M18 13 32 52 46 13M8 27h48" stroke="currentColor" strokeWidth="3" strokeLinejoin="round" opacity="0.75" />
+        </Svg>
+      );
+    case "wave":
+      return (
+        <Svg className={className} title={title}>
+          <path d="M8 38c8-16 16 16 24 0s16 16 24 0" stroke="currentColor" strokeWidth="5" strokeLinecap="round" />
+          <path d="M8 25c8-12 16 12 24 0s16 12 24 0" stroke="currentColor" strokeWidth="5" strokeLinecap="round" opacity="0.55" />
+        </Svg>
+      );
+    case "triangle":
+      return (
+        <Svg className={className} title={title}>
+          <path d="M32 9 57 52H7L32 9Z" fill="currentColor" opacity="0.14" />
+          <path d="M32 9 57 52H7L32 9Z" stroke="currentColor" strokeWidth="4" strokeLinejoin="round" />
+        </Svg>
+      );
+    case "bolt":
+      return (
+        <Svg className={className} title={title}>
+          <path d="M36 5 13 36h17l-2 23 23-33H34l2-21Z" fill="currentColor" opacity="0.18" />
+          <path d="M36 5 13 36h17l-2 23 23-33H34l2-21Z" stroke="currentColor" strokeWidth="4" strokeLinejoin="round" />
+        </Svg>
+      );
+    case "leaf":
+      return (
+        <Svg className={className} title={title}>
+          <path d="M53 11C30 12 14 27 14 45c16 5 34-5 39-34Z" fill="currentColor" opacity="0.14" />
+          <path d="M53 11C30 12 14 27 14 45c16 5 34-5 39-34Z" stroke="currentColor" strokeWidth="4" strokeLinejoin="round" />
+          <path d="M15 49c11-15 22-23 37-36" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
+        </Svg>
+      );
+    case "mole":
+      return (
+        <Svg className={className} title={title}>
+          <circle cx="23" cy="21" r="6" fill="currentColor" opacity="0.15" />
+          <circle cx="41" cy="21" r="6" fill="currentColor" opacity="0.15" />
+          <circle cx="32" cy="34" r="17" fill="currentColor" opacity="0.13" />
+          <circle cx="32" cy="34" r="17" stroke="currentColor" strokeWidth="4" />
+          <path d="M25 32h.1M39 32h.1M28 41h8" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
+        </Svg>
+      );
+    case "mine-small":
+      return (
+        <Svg className={className} title={title}>
+          <circle cx="32" cy="34" r="14" fill="currentColor" opacity="0.12" />
+          <circle cx="32" cy="34" r="14" stroke="currentColor" strokeWidth="4" />
+          <path d="M32 12v7M32 49v5M13 34h7M44 34h7M19 21l5 5M45 21l-5 5M19 47l5-5M45 47l-5-5" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
+        </Svg>
+      );
+    default:
+      return <GameIcon name="portal" className={className} title={title} />;
+  }
+}
+
+function ThemeToggle() {
+  const [theme, setTheme] = useState("light");
+
+  useEffect(() => {
+    const saved = window.localStorage.getItem("game-arena-theme");
+    const preferred = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    const initial = saved || preferred;
+    document.documentElement.dataset.theme = initial;
+    setTheme(initial);
+  }, []);
+
+  const toggleTheme = () => {
+    setTheme((current) => {
+      const next = current === "dark" ? "light" : "dark";
+      document.documentElement.dataset.theme = next;
+      window.localStorage.setItem("game-arena-theme", next);
+      return next;
+    });
+  };
+
+  return (
+    <button className="theme-toggle" type="button" onClick={toggleTheme} aria-pressed={theme === "dark"}>
+      <span className="theme-toggle__icon">
+        <GameIcon name={theme === "dark" ? "moon" : "sun"} />
+      </span>
+      <span>{theme === "dark" ? "Gelap" : "Terang"}</span>
     </button>
   );
 }
@@ -142,44 +397,55 @@ export default function Home() {
 
   return (
     <main className="page-shell">
-      <section className="hero">
+      <header className="topbar">
+        <a className="brand" href="#top" aria-label="Game Arena home">
+          <span className="brand-mark"><GameIcon name="portal" /></span>
+          <span>
+            <strong>Game Arena</strong>
+            <small>Mini game browser</small>
+          </span>
+        </a>
+        <nav className="top-nav" aria-label="Navigasi utama">
+          <a href="#games">Game</a>
+          <a href="#play">Main</a>
+          <ThemeToggle />
+        </nav>
+      </header>
+
+      <section id="top" className="hero">
         <div className="hero-copy">
-          <p className="eyebrow">Portal mini-game siap deploy ke Vercel</p>
-          <h1>Vercel Game Hub</h1>
+          <p className="eyebrow">Ringan, cepat, tanpa login</p>
+          <h1>Mini game yang rapi, bukan template asal jadi.</h1>
           <p className="hero-text">
-            Satu website berisi banyak game casual ringan. Dibuat dengan Next.js, responsif untuk desktop dan mobile,
-            serta mudah dikembangkan dengan game baru.
+            Kumpulan game pendek untuk dimainkan langsung dari browser. Desainnya dibuat bersih, punya mode terang dan gelap, serta tetap nyaman di layar HP.
           </p>
           <div className="hero-actions">
-            <a className="btn primary" href="#games">
-              Pilih Game
-            </a>
-            <a className="btn ghost" href="#play">
-              Main Sekarang
-            </a>
+            <a className="button primary" href="#games">Pilih game</a>
+            <a className="button subtle" href="#play">Lanjut main</a>
           </div>
         </div>
-        <div className="hero-panel" aria-label="Ringkasan website">
-          <div className="floating-card main-card">
-            <span className="big-icon">🎮</span>
+        <aside className="hero-panel" aria-label="Ringkasan website">
+          <div className="showcase-card">
+            <div className="showcase-logo"><GameIcon name="portal" /></div>
             <div>
-              <strong>{games.length} Mini Game</strong>
-              <p>Arcade, puzzle, trivia, refleks, dan game santai.</p>
+              <span className="label">Game Arena</span>
+              <strong>{games.length} mini game aktif</strong>
+              <p>SVG icon custom, transisi halus, dan tanpa aset berat.</p>
             </div>
           </div>
           <div className="mini-stats">
-            <Stat value="0" label="aset eksternal" />
-            <Stat value="100%" label="React" />
-            <Stat value="Vercel" label="ready" />
+            <Stat value="11" label="game" />
+            <Stat value="2" label="tema" />
+            <Stat value="0" label="login" />
           </div>
-        </div>
+        </aside>
       </section>
 
       <section id="games" className="section-block">
         <div className="section-heading">
-          <p className="eyebrow">Katalog game</p>
-          <h2>Pilih game yang ingin dimainkan</h2>
-          <p>Semua game berjalan langsung di browser, tanpa login dan tanpa database.</p>
+          <p className="eyebrow">Katalog</p>
+          <h2>Pilih satu, langsung main.</h2>
+          <p>Setiap kartu punya ritme permainan berbeda: strategi, refleks, puzzle, trivia, dan permainan santai.</p>
         </div>
 
         <div className="game-grid">
@@ -190,7 +456,7 @@ export default function Home() {
               className={cls("game-card", selected === game.id && "active")}
               onClick={() => chooseGame(game.id)}
             >
-              <span className="game-icon">{game.icon}</span>
+              <span className="game-icon"><GameIcon name={game.icon} /></span>
               <span className="pill-row">
                 <span>{game.category}</span>
                 <span>{game.level}</span>
@@ -204,12 +470,13 @@ export default function Home() {
 
       <section id="play" className="play-section">
         <div className="play-header">
-          <div>
-            <p className="eyebrow">Sedang dimainkan</p>
-            <h2>
-              <span>{activeGame.icon}</span> {activeGame.title}
-            </h2>
-            <p>{activeGame.description}</p>
+          <div className="play-title">
+            <span className="play-icon"><GameIcon name={activeGame.icon} /></span>
+            <div>
+              <p className="eyebrow">Sedang dimainkan</p>
+              <h2>{activeGame.title}</h2>
+              <p>{activeGame.description}</p>
+            </div>
           </div>
           <div className="play-badges">
             <span>{activeGame.category}</span>
@@ -220,8 +487,8 @@ export default function Home() {
       </section>
 
       <footer className="footer">
-        <strong>Vercel Game Hub</strong>
-        <span>Next.js mini-game portal. Tambahkan game baru lewat komponen React di app/page.jsx.</span>
+        <strong>Game Arena</strong>
+        <span>Dibuat untuk Vercel. Semua game berjalan di client, tanpa database.</span>
       </footer>
     </main>
   );
@@ -233,7 +500,7 @@ function TicTacToe() {
 
   const winner = getTicTacToeWinner(board);
   const isDraw = !winner && board.every(Boolean);
-  const status = winner ? `Pemenang: ${winner}` : isDraw ? "Seri!" : `Giliran: ${turn}`;
+  const status = winner ? `Pemenang: ${winner}` : isDraw ? "Seri." : `Giliran: ${turn}`;
 
   const play = (index) => {
     if (board[index] || winner) return;
@@ -252,8 +519,8 @@ function TicTacToe() {
     <div className="game-surface two-column">
       <div className="info-panel">
         <h3>{status}</h3>
-        <p>Tips: blokir jalur lawan sebelum ia membuat tiga simbol sejajar.</p>
-        <PrimaryButton onClick={reset}>Reset papan</PrimaryButton>
+        <p>Blokir jalur lawan sebelum ia membuat tiga simbol sejajar.</p>
+        <ActionButton onClick={reset}>Reset papan</ActionButton>
       </div>
       <div className="ttt-board" role="grid" aria-label="Papan Tic Tac Toe">
         {board.map((cell, index) => (
@@ -274,16 +541,10 @@ function TicTacToe() {
 
 function getTicTacToeWinner(board) {
   const lines = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6]
+    [0, 1, 2], [3, 4, 5], [6, 7, 8],
+    [0, 3, 6], [1, 4, 7], [2, 5, 8],
+    [0, 4, 8], [2, 4, 6]
   ];
-
   for (const [a, b, c] of lines) {
     if (board[a] && board[a] === board[b] && board[a] === board[c]) return board[a];
   }
@@ -301,17 +562,13 @@ function GuessNumber() {
     event.preventDefault();
     const value = Number(guess);
     if (!value || value < 1 || value > 100) {
-      setMessage("Angkanya harus 1 sampai 100 ya.");
+      setMessage("Angkanya harus 1 sampai 100.");
       return;
     }
     setTries((count) => count + 1);
-    if (value === target) {
-      setMessage(`Benar! Angkanya ${target}. Kamu menebak dalam ${tries + 1} percobaan.`);
-    } else if (value < target) {
-      setMessage("Terlalu kecil. Coba angka yang lebih besar.");
-    } else {
-      setMessage("Terlalu besar. Coba angka yang lebih kecil.");
-    }
+    if (value === target) setMessage(`Benar. Angkanya ${target}. Total percobaan: ${tries + 1}.`);
+    else if (value < target) setMessage("Terlalu kecil. Coba angka yang lebih besar.");
+    else setMessage("Terlalu besar. Coba angka yang lebih kecil.");
   };
 
   const reset = () => {
@@ -323,87 +580,64 @@ function GuessNumber() {
 
   return (
     <div className="game-surface compact-game">
-      <div className="score-strip">
-        <span>Percobaan</span>
-        <strong>{tries}</strong>
-      </div>
+      <div className="score-strip"><span>Percobaan</span><strong>{tries}</strong></div>
       <form className="guess-form" onSubmit={submit}>
-        <input
-          type="number"
-          min="1"
-          max="100"
-          value={guess}
-          onChange={(event) => setGuess(event.target.value)}
-          placeholder="Contoh: 42"
-        />
-        <PrimaryButton type="submit">Tebak</PrimaryButton>
+        <input type="number" min="1" max="100" value={guess} onChange={(event) => setGuess(event.target.value)} placeholder="Contoh: 42" />
+        <ActionButton type="submit">Tebak</ActionButton>
       </form>
       <p className="game-message">{message}</p>
-      <PrimaryButton variant="ghost small" onClick={reset}>
-        Angka baru
-      </PrimaryButton>
+      <ActionButton variant="subtle small" onClick={reset}>Angka baru</ActionButton>
     </div>
   );
 }
 
 function RockPaperScissors() {
   const choices = [
-    { name: "Batu", icon: "✊" },
-    { name: "Gunting", icon: "✌️" },
-    { name: "Kertas", icon: "✋" }
+    { name: "Batu", icon: "rock" },
+    { name: "Gunting", icon: "scissors" },
+    { name: "Kertas", icon: "paper" }
   ];
-  const [round, setRound] = useState({ player: "?", bot: "?", result: "Pilih salah satu untuk mulai." });
+  const [round, setRound] = useState({ player: "-", bot: "-", result: "Pilih salah satu untuk mulai." });
   const [score, setScore] = useState({ player: 0, bot: 0, draw: 0 });
 
   const play = (choice) => {
     const bot = choices[Math.floor(Math.random() * choices.length)].name;
     const beats = { Batu: "Gunting", Gunting: "Kertas", Kertas: "Batu" };
-    let result = "Seri!";
+    let result = "Seri.";
     let key = "draw";
-
     if (choice !== bot) {
       const playerWins = beats[choice] === bot;
-      result = playerWins ? "Kamu menang!" : "Komputer menang.";
+      result = playerWins ? "Kamu menang." : "Komputer menang.";
       key = playerWins ? "player" : "bot";
     }
-
     setRound({ player: choice, bot, result });
     setScore((current) => ({ ...current, [key]: current[key] + 1 }));
   };
 
   return (
     <div className="game-surface compact-game">
-      <div className="rps-score">
-        <span>Kamu: {score.player}</span>
-        <span>Seri: {score.draw}</span>
-        <span>Bot: {score.bot}</span>
-      </div>
+      <div className="rps-score"><span>Kamu: {score.player}</span><span>Seri: {score.draw}</span><span>Bot: {score.bot}</span></div>
       <div className="rps-actions">
         {choices.map((choice) => (
           <button type="button" key={choice.name} className="choice-button" onClick={() => play(choice.name)}>
-            <span>{choice.icon}</span>
-            {choice.name}
+            <GameIcon name={choice.icon} />
+            <span>{choice.name}</span>
           </button>
         ))}
       </div>
       <div className="versus-card">
-        <p>
-          Kamu <strong>{round.player}</strong> vs Bot <strong>{round.bot}</strong>
-        </p>
+        <p>Kamu <strong>{round.player}</strong> vs Bot <strong>{round.bot}</strong></p>
         <h3>{round.result}</h3>
       </div>
     </div>
   );
 }
 
-const memorySymbols = ["🍓", "🧁", "🐱", "🚀", "🌻", "🎧"];
+const memorySymbols = ["orbit", "gem", "wave", "triangle", "bolt", "leaf"];
 
 function createMemoryDeck() {
   return memorySymbols
-    .flatMap((value) => [
-      { id: `${value}-a`, value },
-      { id: `${value}-b`, value }
-    ])
+    .flatMap((value) => [{ id: `${value}-a`, value }, { id: `${value}-b`, value }])
     .sort(() => Math.random() - 0.5);
 }
 
@@ -416,10 +650,8 @@ function MemoryMatch() {
   useEffect(() => {
     if (flipped.length !== 2) return undefined;
     const [first, second] = flipped;
-    if (deck[first].value === deck[second].value) {
-      setMatched((current) => [...current, deck[first].value]);
-    }
-    const timer = window.setTimeout(() => setFlipped([]), 700);
+    if (deck[first].value === deck[second].value) setMatched((current) => [...current, deck[first].value]);
+    const timer = window.setTimeout(() => setFlipped([]), 650);
     return () => window.clearTimeout(timer);
   }, [flipped, deck]);
 
@@ -442,22 +674,17 @@ function MemoryMatch() {
   return (
     <div className="game-surface two-column">
       <div className="info-panel">
-        <h3>{completed ? "Semua pasangan ditemukan!" : "Temukan pasangan kartu"}</h3>
+        <h3>{completed ? "Semua pasangan ditemukan." : "Temukan pasangan kartu"}</h3>
         <p>Gerakan: {moves}</p>
         <p>Pasangan: {matched.length}/{memorySymbols.length}</p>
-        <PrimaryButton onClick={reset}>Acak ulang</PrimaryButton>
+        <ActionButton onClick={reset}>Acak ulang</ActionButton>
       </div>
       <div className="memory-grid">
         {deck.map((card, index) => {
           const isOpen = flipped.includes(index) || matched.includes(card.value);
           return (
-            <button
-              type="button"
-              key={card.id}
-              className={cls("memory-card", isOpen && "open")}
-              onClick={() => openCard(index)}
-            >
-              {isOpen ? card.value : "?"}
+            <button type="button" key={card.id} className={cls("memory-card", isOpen && "open")} onClick={() => openCard(index)}>
+              {isOpen ? <GameIcon name={card.value} /> : <span className="card-back" />}
             </button>
           );
         })}
@@ -488,9 +715,7 @@ function WhackAMole() {
 
   useEffect(() => {
     if (!playing) return undefined;
-    const timer = window.setInterval(() => {
-      setMole(Math.floor(Math.random() * 9));
-    }, 650);
+    const timer = window.setInterval(() => setMole(Math.floor(Math.random() * 9)), 620);
     return () => window.clearInterval(timer);
   }, [playing]);
 
@@ -510,15 +735,15 @@ function WhackAMole() {
   return (
     <div className="game-surface two-column">
       <div className="info-panel">
-        <h3>{playing ? "Cepat klik mole!" : time === 0 ? "Waktu habis!" : "Siap bermain?"}</h3>
+        <h3>{playing ? "Kejar targetnya" : time === 0 ? "Waktu habis." : "Siap bermain?"}</h3>
         <p>Skor: {score}</p>
         <p>Waktu: {time}s</p>
-        <PrimaryButton onClick={start}>{playing ? "Mulai ulang" : "Mulai"}</PrimaryButton>
+        <ActionButton onClick={start}>{playing ? "Mulai ulang" : "Mulai"}</ActionButton>
       </div>
       <div className="mole-grid">
         {Array.from({ length: 9 }).map((_, index) => (
           <button type="button" key={index} className="mole-hole" onClick={() => hit(index)}>
-            <span>{playing && mole === index ? "🐹" : ""}</span>
+            {playing && mole === index ? <GameIcon name="mole" /> : null}
           </button>
         ))}
       </div>
@@ -528,11 +753,7 @@ function WhackAMole() {
 
 function SnakeGame() {
   const size = 16;
-  const [snake, setSnake] = useState([
-    [8, 8],
-    [7, 8],
-    [6, 8]
-  ]);
+  const [snake, setSnake] = useState([[8, 8], [7, 8], [6, 8]]);
   const [food, setFood] = useState([12, 8]);
   const [direction, setDirection] = useState([1, 0]);
   const [running, setRunning] = useState(false);
@@ -540,9 +761,7 @@ function SnakeGame() {
   const [score, setScore] = useState(0);
   const directionRef = useRef(direction);
 
-  useEffect(() => {
-    directionRef.current = direction;
-  }, [direction]);
+  useEffect(() => { directionRef.current = direction; }, [direction]);
 
   const randomFood = (body) => {
     const available = [];
@@ -555,12 +774,7 @@ function SnakeGame() {
   };
 
   const reset = () => {
-    const startSnake = [
-      [8, 8],
-      [7, 8],
-      [6, 8]
-    ];
-    setSnake(startSnake);
+    setSnake([[8, 8], [7, 8], [6, 8]]);
     setFood([12, 8]);
     setDirection([1, 0]);
     setRunning(false);
@@ -568,28 +782,22 @@ function SnakeGame() {
     setScore(0);
   };
 
+  const setSafeDirection = (next) => {
+    setDirection((current) => {
+      if (current[0] + next[0] === 0 && current[1] + next[1] === 0) return current;
+      return next;
+    });
+    if (alive) setRunning(true);
+  };
+
   useEffect(() => {
     const handleKey = (event) => {
-      const map = {
-        ArrowUp: [0, -1],
-        ArrowDown: [0, 1],
-        ArrowLeft: [-1, 0],
-        ArrowRight: [1, 0],
-        w: [0, -1],
-        s: [0, 1],
-        a: [-1, 0],
-        d: [1, 0]
-      };
+      const map = { ArrowUp: [0, -1], ArrowDown: [0, 1], ArrowLeft: [-1, 0], ArrowRight: [1, 0], w: [0, -1], s: [0, 1], a: [-1, 0], d: [1, 0] };
       const next = map[event.key];
       if (!next) return;
       event.preventDefault();
-      setDirection((current) => {
-        if (current[0] + next[0] === 0 && current[1] + next[1] === 0) return current;
-        return next;
-      });
-      if (alive) setRunning(true);
+      setSafeDirection(next);
     };
-
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
   }, [alive]);
@@ -605,20 +813,16 @@ function SnakeGame() {
         const bodyToCheck = willEat ? current : current.slice(0, -1);
         const hitWall = head[0] < 0 || head[0] >= size || head[1] < 0 || head[1] >= size;
         const hitBody = bodyToCheck.some(([x, y]) => x === head[0] && y === head[1]);
-
         if (hitWall || hitBody) {
           setAlive(false);
           setRunning(false);
           return current;
         }
-
         const nextSnake = [head, ...current];
         if (willEat) {
           setScore((value) => value + 10);
           setFood(randomFood(nextSnake));
-        } else {
-          nextSnake.pop();
-        }
+        } else nextSnake.pop();
         return nextSnake;
       });
     }, 145);
@@ -633,12 +837,20 @@ function SnakeGame() {
   return (
     <div className="game-surface two-column snake-layout">
       <div className="info-panel">
-        <h3>{alive ? (running ? "Snake berjalan" : "Tekan Start atau tombol arah") : "Game over"}</h3>
+        <h3>{alive ? (running ? "Snake berjalan" : "Tekan start atau arah") : "Game over"}</h3>
         <p>Skor: {score}</p>
-        <p>Kontrol: tombol panah atau W A S D.</p>
+        <p>Kontrol: tombol arah, W A S D, atau pad di bawah.</p>
         <div className="button-row">
-          <PrimaryButton onClick={() => alive && setRunning(true)}>Start</PrimaryButton>
-          <PrimaryButton variant="ghost small" onClick={reset}>Reset</PrimaryButton>
+          <ActionButton onClick={() => alive && setRunning(true)}>Start</ActionButton>
+          <ActionButton variant="subtle small" onClick={reset}>Reset</ActionButton>
+        </div>
+        <div className="pad-controls compact-pad" aria-label="Kontrol snake">
+          <span />
+          <button type="button" onClick={() => setSafeDirection([0, -1])}>↑</button>
+          <span />
+          <button type="button" onClick={() => setSafeDirection([-1, 0])}>←</button>
+          <button type="button" onClick={() => setSafeDirection([0, 1])}>↓</button>
+          <button type="button" onClick={() => setSafeDirection([1, 0])}>→</button>
         </div>
       </div>
       <div className="snake-board" style={{ "--size": size }}>
@@ -652,9 +864,7 @@ function SnakeGame() {
   );
 }
 
-function empty2048Board() {
-  return Array.from({ length: 4 }, () => Array(4).fill(0));
-}
+function empty2048Board() { return Array.from({ length: 4 }, () => Array(4).fill(0)); }
 
 function add2048Tile(board) {
   const next = board.map((row) => [...row]);
@@ -666,26 +876,20 @@ function add2048Tile(board) {
   return next;
 }
 
-function create2048Board() {
-  return add2048Tile(add2048Tile(empty2048Board()));
-}
+function create2048Board() { return add2048Tile(add2048Tile(empty2048Board())); }
 
 function slideLine(line) {
   const values = line.filter(Boolean);
   const result = [];
   let gained = 0;
-
   for (let index = 0; index < values.length; index += 1) {
     if (values[index] === values[index + 1]) {
       const merged = values[index] * 2;
       result.push(merged);
       gained += merged;
       index += 1;
-    } else {
-      result.push(values[index]);
-    }
+    } else result.push(values[index]);
   }
-
   while (result.length < 4) result.push(0);
   return { line: result, gained };
 }
@@ -693,22 +897,18 @@ function slideLine(line) {
 function move2048(board, direction) {
   const next = empty2048Board();
   let gained = 0;
-
   for (let i = 0; i < 4; i += 1) {
     const line = direction === "left" || direction === "right" ? board[i] : board.map((row) => row[i]);
     const prepared = direction === "right" || direction === "down" ? [...line].reverse() : [...line];
     const moved = slideLine(prepared);
     const finalLine = direction === "right" || direction === "down" ? moved.line.reverse() : moved.line;
     gained += moved.gained;
-
     for (let j = 0; j < 4; j += 1) {
       if (direction === "left" || direction === "right") next[i][j] = finalLine[j];
       else next[j][i] = finalLine[j];
     }
   }
-
-  const changed = JSON.stringify(board) !== JSON.stringify(next);
-  return { board: next, gained, changed };
+  return { board: next, gained, changed: JSON.stringify(board) !== JSON.stringify(next) };
 }
 
 function canMove2048(board) {
@@ -727,11 +927,7 @@ function TwentyFortyEight() {
   const [best, setBest] = useState(0);
   const [status, setStatus] = useState("playing");
 
-  const reset = () => {
-    setBoard(create2048Board());
-    setScore(0);
-    setStatus("playing");
-  };
+  const reset = () => { setBoard(create2048Board()); setScore(0); setStatus("playing"); };
 
   const performMove = (direction) => {
     if (status !== "playing") return;
@@ -764,25 +960,17 @@ function TwentyFortyEight() {
   return (
     <div className="game-surface two-column game-2048-layout">
       <div className="info-panel">
-        <h3>{status === "won" ? "Kamu mencapai 2048!" : status === "lost" ? "Tidak ada gerakan lagi." : "Gabungkan angka"}</h3>
+        <h3>{status === "won" ? "Target 2048 tercapai." : status === "lost" ? "Tidak ada gerakan lagi." : "Gabungkan angka"}</h3>
         <p>Skor: {score}</p>
         <p>Terbaik: {best}</p>
-        <PrimaryButton onClick={reset}>Game baru</PrimaryButton>
+        <ActionButton onClick={reset}>Game baru</ActionButton>
         <div className="pad-controls" aria-label="Kontrol 2048">
-          <span />
-          <button type="button" onClick={() => performMove("up")}>↑</button>
-          <span />
-          <button type="button" onClick={() => performMove("left")}>←</button>
-          <button type="button" onClick={() => performMove("down")}>↓</button>
-          <button type="button" onClick={() => performMove("right")}>→</button>
+          <span /><button type="button" onClick={() => performMove("up")}>↑</button><span />
+          <button type="button" onClick={() => performMove("left")}>←</button><button type="button" onClick={() => performMove("down")}>↓</button><button type="button" onClick={() => performMove("right")}>→</button>
         </div>
       </div>
       <div className="board-2048">
-        {board.flat().map((value, index) => (
-          <span key={index} className={cls("tile-2048", value && `tile-${Math.min(value, 2048)}`)}>
-            {value || ""}
-          </span>
-        ))}
+        {board.flat().map((value, index) => <span key={index} className={cls("tile-2048", value && `tile-${Math.min(value, 2048)}`)}>{value || ""}</span>)}
       </div>
     </div>
   );
@@ -791,24 +979,14 @@ function TwentyFortyEight() {
 function createMineBoard() {
   const size = 6;
   const mineCount = 7;
-  const cells = Array.from({ length: size * size }, (_, index) => ({
-    index,
-    mine: false,
-    count: 0,
-    revealed: false
-  }));
-
+  const cells = Array.from({ length: size * size }, (_, index) => ({ index, mine: false, count: 0, revealed: false }));
   const mines = new Set();
   while (mines.size < mineCount) mines.add(Math.floor(Math.random() * cells.length));
-  mines.forEach((index) => {
-    cells[index].mine = true;
-  });
-
+  mines.forEach((index) => { cells[index].mine = true; });
   cells.forEach((cell) => {
     if (cell.mine) return;
     cell.count = getMineNeighbors(cell.index, size).filter((neighbor) => cells[neighbor].mine).length;
   });
-
   return cells;
 }
 
@@ -848,23 +1026,17 @@ function MinesweeperLite() {
   const [board, setBoard] = useState(createMineBoard);
   const [status, setStatus] = useState("playing");
 
-  const reset = () => {
-    setBoard(createMineBoard());
-    setStatus("playing");
-  };
+  const reset = () => { setBoard(createMineBoard()); setStatus("playing"); };
 
   const open = (index) => {
     if (status !== "playing" || board[index].revealed) return;
     const next = board.map((cell) => ({ ...cell }));
     if (next[index].mine) {
-      next.forEach((cell) => {
-        if (cell.mine) cell.revealed = true;
-      });
+      next.forEach((cell) => { if (cell.mine) cell.revealed = true; });
       setBoard(next);
       setStatus("lost");
       return;
     }
-
     revealCells(next, index, size);
     const safeRevealed = next.filter((cell) => !cell.mine && cell.revealed).length;
     if (safeRevealed === size * size - mineCount) setStatus("won");
@@ -876,20 +1048,15 @@ function MinesweeperLite() {
   return (
     <div className="game-surface two-column">
       <div className="info-panel">
-        <h3>{status === "won" ? "Semua area aman terbuka!" : status === "lost" ? "Boom! Kena ranjau." : "Cari petak aman"}</h3>
+        <h3>{status === "won" ? "Semua area aman terbuka." : status === "lost" ? "Kena ranjau." : "Cari petak aman"}</h3>
         <p>Ranjau: {mineCount}</p>
         <p>Petak aman tersisa: {safeLeft}</p>
-        <PrimaryButton onClick={reset}>Papan baru</PrimaryButton>
+        <ActionButton onClick={reset}>Papan baru</ActionButton>
       </div>
       <div className="mine-board">
         {board.map((cell) => (
-          <button
-            type="button"
-            key={cell.index}
-            className={cls("mine-cell", cell.revealed && "revealed", cell.mine && cell.revealed && "mine")}
-            onClick={() => open(cell.index)}
-          >
-            {cell.revealed ? (cell.mine ? "💣" : cell.count || "") : ""}
+          <button type="button" key={cell.index} className={cls("mine-cell", cell.revealed && "revealed", cell.mine && cell.revealed && "mine")} onClick={() => open(cell.index)}>
+            {cell.revealed ? (cell.mine ? <GameIcon name="mine-small" /> : cell.count || "") : ""}
           </button>
         ))}
       </div>
@@ -898,31 +1065,11 @@ function MinesweeperLite() {
 }
 
 const quizQuestions = [
-  {
-    question: "Planet terbesar di tata surya adalah...",
-    options: ["Mars", "Jupiter", "Venus", "Merkurius"],
-    answer: "Jupiter"
-  },
-  {
-    question: "HTML dipakai untuk...",
-    options: ["Membuat struktur halaman", "Mengedit video", "Menyimpan uang", "Mengatur baterai"],
-    answer: "Membuat struktur halaman"
-  },
-  {
-    question: "Ibu kota Indonesia saat ini adalah...",
-    options: ["Bandung", "Surabaya", "Jakarta", "Medan"],
-    answer: "Jakarta"
-  },
-  {
-    question: "Hasil dari 7 x 8 adalah...",
-    options: ["54", "56", "64", "78"],
-    answer: "56"
-  },
-  {
-    question: "CSS berfungsi untuk...",
-    options: ["Menata tampilan", "Menyolder kabel", "Memasak nasi", "Mengirim satelit"],
-    answer: "Menata tampilan"
-  }
+  { question: "CSS biasanya dipakai untuk...", options: ["Menata tampilan", "Menghapus file", "Mengisi baterai", "Merekam suara"], answer: "Menata tampilan" },
+  { question: "Hasil dari 7 x 8 adalah...", options: ["54", "56", "64", "78"], answer: "56" },
+  { question: "HTML dipakai untuk...", options: ["Struktur halaman", "Mengedit video", "Membuat kopi", "Membuka kunci"], answer: "Struktur halaman" },
+  { question: "Warna lampu lalu lintas untuk jalan adalah...", options: ["Merah", "Kuning", "Hijau", "Biru"], answer: "Hijau" },
+  { question: "React bekerja dengan konsep...", options: ["Komponen", "Kabel", "Batu", "Baterai"], answer: "Komponen" }
 ];
 
 function QuickQuiz() {
@@ -937,26 +1084,11 @@ function QuickQuiz() {
     setSelected(option);
     if (option === current.answer) setScore((value) => value + 1);
   };
-
-  const next = () => {
-    setSelected(null);
-    setIndex((value) => value + 1);
-  };
-
-  const reset = () => {
-    setIndex(0);
-    setSelected(null);
-    setScore(0);
-  };
+  const next = () => { setSelected(null); setIndex((value) => value + 1); };
+  const reset = () => { setIndex(0); setSelected(null); setScore(0); };
 
   if (completed) {
-    return (
-      <div className="game-surface compact-game result-panel">
-        <h3>Quiz selesai!</h3>
-        <p>Skor kamu: {score}/{quizQuestions.length}</p>
-        <PrimaryButton onClick={reset}>Main lagi</PrimaryButton>
-      </div>
-    );
+    return <div className="game-surface compact-game result-panel"><h3>Quiz selesai.</h3><p>Skor kamu: {score}/{quizQuestions.length}</p><ActionButton onClick={reset}>Main lagi</ActionButton></div>;
   }
 
   return (
@@ -965,35 +1097,21 @@ function QuickQuiz() {
       <h3>{current.question}</h3>
       <div className="quiz-options">
         {current.options.map((option) => (
-          <button
-            type="button"
-            key={option}
-            className={cls(
-              "quiz-option",
-              selected && option === current.answer && "correct",
-              selected === option && option !== current.answer && "wrong"
-            )}
-            onClick={() => choose(option)}
-          >
+          <button type="button" key={option} className={cls("quiz-option", selected && option === current.answer && "correct", selected === option && option !== current.answer && "wrong")} onClick={() => choose(option)}>
             {option}
           </button>
         ))}
       </div>
-      {selected && (
-        <div className="quiz-feedback">
-          <strong>{selected === current.answer ? "Benar!" : "Belum tepat."}</strong>
-          <PrimaryButton onClick={next}>{index === quizQuestions.length - 1 ? "Lihat skor" : "Lanjut"}</PrimaryButton>
-        </div>
-      )}
+      {selected && <div className="quiz-feedback"><strong>{selected === current.answer ? "Benar." : "Belum tepat."}</strong><ActionButton onClick={next}>{index === quizQuestions.length - 1 ? "Lihat skor" : "Lanjut"}</ActionButton></div>}
     </div>
   );
 }
 
 const wordBank = [
-  { word: "vercel", hint: "Platform deploy favorit untuk Next.js" },
+  { word: "vercel", hint: "Platform deploy yang sering dipakai untuk Next.js" },
   { word: "react", hint: "Library UI berbasis komponen" },
-  { word: "game", hint: "Sesuatu yang sedang kamu buat" },
-  { word: "kode", hint: "Ditulis programmer" },
+  { word: "game", hint: "Permainan di browser" },
+  { word: "kode", hint: "Ditulis developer" },
   { word: "puzzle", hint: "Permainan asah otak" },
   { word: "browser", hint: "Tempat membuka website" }
 ];
@@ -1028,33 +1146,28 @@ function WordScramble() {
     event.preventDefault();
     if (answer.trim().toLowerCase() === item.word) {
       setScore((value) => value + 1);
-      setMessage("Benar! Klik kata baru untuk lanjut.");
-    } else {
-      setMessage("Belum tepat. Coba perhatikan hint-nya.");
-    }
+      setMessage("Benar. Klik kata baru untuk lanjut.");
+    } else setMessage("Belum tepat. Perhatikan hint-nya.");
   };
 
   return (
     <div className="game-surface compact-game word-game">
-      <div className="score-strip">
-        <span>Skor</span>
-        <strong>{score}</strong>
-      </div>
+      <div className="score-strip"><span>Skor</span><strong>{score}</strong></div>
       <div className="scrambled-word">{scrambled}</div>
       <p>Hint: {item.hint}</p>
       <form className="guess-form" onSubmit={check}>
         <input value={answer} onChange={(event) => setAnswer(event.target.value)} placeholder="Jawaban kamu" />
-        <PrimaryButton type="submit">Cek</PrimaryButton>
+        <ActionButton type="submit">Cek</ActionButton>
       </form>
       <p className="game-message">{message}</p>
-      <PrimaryButton variant="ghost small" onClick={next}>Kata baru</PrimaryButton>
+      <ActionButton variant="subtle small" onClick={next}>Kata baru</ActionButton>
     </div>
   );
 }
 
 function ReactionTest() {
   const [status, setStatus] = useState("idle");
-  const [message, setMessage] = useState("Klik mulai, tunggu hijau, lalu tap secepat mungkin.");
+  const [message, setMessage] = useState("Klik mulai, tunggu hijau, lalu tekan area ini.");
   const [startTime, setStartTime] = useState(0);
   const [last, setLast] = useState(null);
   const [best, setBest] = useState(null);
@@ -1065,13 +1178,13 @@ function ReactionTest() {
   const start = () => {
     window.clearTimeout(timerRef.current);
     setStatus("waiting");
-    setMessage("Tunggu... jangan klik dulu.");
+    setMessage("Tunggu. Jangan tekan dulu.");
     setLast(null);
     const delay = 1000 + Math.random() * 3000;
     timerRef.current = window.setTimeout(() => {
       setStatus("go");
       setStartTime(Date.now());
-      setMessage("Sekarang! Klik/tap area ini.");
+      setMessage("Sekarang. Tekan secepat mungkin.");
     }, delay);
   };
 
@@ -1079,7 +1192,7 @@ function ReactionTest() {
     if (status === "waiting") {
       window.clearTimeout(timerRef.current);
       setStatus("tooSoon");
-      setMessage("Terlalu cepat! Mulai lagi dan tunggu warna hijau.");
+      setMessage("Terlalu cepat. Mulai lagi dan tunggu hijau.");
       return;
     }
     if (status !== "go") return;
@@ -1093,14 +1206,11 @@ function ReactionTest() {
   return (
     <div className="game-surface compact-game">
       <button type="button" className={cls("reaction-zone", status)} onClick={tap}>
-        <strong>{status === "go" ? "KLIK!" : status === "waiting" ? "Tunggu..." : "Tes Refleks"}</strong>
+        <strong>{status === "go" ? "TEKAN" : status === "waiting" ? "TUNGGU" : "TES REFLEKS"}</strong>
         <span>{message}</span>
       </button>
-      <div className="rps-score">
-        <span>Terakhir: {last ? `${last} ms` : "-"}</span>
-        <span>Terbaik: {best ? `${best} ms` : "-"}</span>
-      </div>
-      <PrimaryButton onClick={start}>Mulai</PrimaryButton>
+      <div className="rps-score"><span>Terakhir: {last ? `${last} ms` : "-"}</span><span>Terbaik: {best ? `${best} ms` : "-"}</span></div>
+      <ActionButton onClick={start}>Mulai</ActionButton>
     </div>
   );
 }
