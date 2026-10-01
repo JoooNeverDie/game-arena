@@ -40,8 +40,17 @@ Build command default:
 npm run build
 ```
 
+## API catalog
+
+Project ini juga punya endpoint JSON:
+
+```txt
+/api/games
+```
+
 ## Kustomisasi
 
-- Edit daftar game dan komponen di `app/page.jsx`.
+- Edit metadata game di `app/games-data.js`.
+- Edit komponen game di `app/page.jsx`.
 - Edit tampilan, animasi, dan warna tema di `app/globals.css`.
 - Edit metadata website di `app/layout.jsx`.
