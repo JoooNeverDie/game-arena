@@ -1,6 +1,6 @@
-# Vercel Game Hub
+# Game Arena
 
-Website portal mini-game casual berbasis **Next.js + React**. Cocok untuk deploy di Vercel.
+Website portal mini-game casual berbasis **Next.js + React**. Sudah memakai tema terang/gelap, ikon SVG custom, dan siap deploy ke Vercel.
 
 ## Game yang tersedia
 
@@ -27,17 +27,21 @@ Buka `http://localhost:3000`.
 
 ## Deploy ke Vercel
 
-1. Upload project ini ke GitHub.
+1. Upload isi project ini ke GitHub.
 2. Buka https://vercel.com/new.
-3. Import repository kamu.
-4. Framework akan terdeteksi sebagai **Next.js**.
-5. Klik **Deploy**.
+3. Import repository.
+4. Pilih framework **Next.js**.
+5. Root Directory cukup `./` jika `package.json` ada di folder utama repo.
+6. Klik **Deploy**.
 
-Tidak perlu konfigurasi tambahan.
+Build command default:
+
+```bash
+npm run build
+```
 
 ## Kustomisasi
 
-- Edit daftar game dan kartu di `app/page.jsx`.
-- Edit warna/desain di `app/globals.css`.
-- Ganti nama website pada `app/layout.jsx` dan bagian hero di `app/page.jsx`.
-update deploy
+- Edit daftar game dan komponen di `app/page.jsx`.
+- Edit tampilan, animasi, dan warna tema di `app/globals.css`.
+- Edit metadata website di `app/layout.jsx`.
