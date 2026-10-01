@@ -1,97 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-
-const games = [
-  {
-    id: "tictactoe",
-    title: "Tic Tac Toe",
-    icon: "tictactoe",
-    category: "Strategi",
-    level: "Mudah",
-    description: "Adu tiga simbol sejajar di papan klasik 3x3."
-  },
-  {
-    id: "snake",
-    title: "Snake",
-    icon: "snake",
-    category: "Arcade",
-    level: "Sedang",
-    description: "Ambil makanan, panjangkan badan, dan hindari tabrakan."
-  },
-  {
-    id: "memory",
-    title: "Memory Match",
-    icon: "memory",
-    category: "Puzzle",
-    level: "Mudah",
-    description: "Buka kartu, ingat posisinya, lalu temukan pasangannya."
-  },
-  {
-    id: "guess",
-    title: "Tebak Angka",
-    icon: "guess",
-    category: "Santai",
-    level: "Mudah",
-    description: "Cari angka rahasia dengan petunjuk lebih besar atau kecil."
-  },
-  {
-    id: "rps",
-    title: "Batu Gunting Kertas",
-    icon: "rps",
-    category: "Cepat",
-    level: "Mudah",
-    description: "Main satu ronde cepat melawan komputer."
-  },
-  {
-    id: "whack",
-    title: "Whack-a-Mole",
-    icon: "whack",
-    category: "Refleks",
-    level: "Sedang",
-    description: "Pukul target yang muncul sebelum waktunya habis."
-  },
-  {
-    id: "twenty48",
-    title: "2048 Mini",
-    icon: "twenty48",
-    category: "Puzzle",
-    level: "Sedang",
-    description: "Geser angka, gabungkan tile, dan kejar skor tertinggi."
-  },
-  {
-    id: "mines",
-    title: "Minesweeper Lite",
-    icon: "mines",
-    category: "Logika",
-    level: "Sedang",
-    description: "Buka petak aman tanpa menyentuh ranjau."
-  },
-  {
-    id: "quiz",
-    title: "Quiz Cepat",
-    icon: "quiz",
-    category: "Trivia",
-    level: "Mudah",
-    description: "Jawab pertanyaan ringan dan lihat skor akhir."
-  },
-  {
-    id: "scramble",
-    title: "Susun Kata",
-    icon: "scramble",
-    category: "Kata",
-    level: "Mudah",
-    description: "Tebak kata asli dari huruf yang diacak."
-  },
-  {
-    id: "reaction",
-    title: "Tes Refleks",
-    icon: "reaction",
-    category: "Refleks",
-    level: "Mudah",
-    description: "Tunggu sinyal hijau, lalu tekan secepat mungkin."
-  }
-];
+import { useEffect, useMemo, useRef, useState } from "react";
+import { games } from "./games-data";
 
 const gameComponents = {
   tictactoe: TicTacToe,
@@ -383,8 +293,60 @@ function Stat({ value, label }) {
   );
 }
 
+function formatNumber(value) {
+  return new Intl.NumberFormat("id-ID").format(value);
+}
+
+function matchesQuickFilter(game, quickFilter) {
+  if (quickFilter === "Semua") return true;
+  if (quickFilter === "Populer") return game.views >= 250 || game.likes >= 80;
+  if (quickFilter === "Top Views") return game.views >= 300;
+  if (quickFilter === "Top Likes") return game.likes >= 90;
+  return game.modes.includes(quickFilter);
+}
+
 export default function Home() {
   const [selected, setSelected] = useState(games[0].id);
+  const [query, setQuery] = useState("");
+  const [quickFilter, setQuickFilter] = useState("Semua");
+  const [category, setCategory] = useState("All");
+  const [sortBy, setSortBy] = useState("newest");
+  const [viewMode, setViewMode] = useState("grid");
+  const [pageSize, setPageSize] = useState(12);
+  const [endpoint, setEndpoint] = useState("/api/games");
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    setEndpoint(`${window.location.origin}/api/games`);
+  }, []);
+
+  const categories = useMemo(() => ["All", ...Array.from(new Set(games.map((game) => game.category)))], []);
+  const quickFilters = ["Semua", "Populer", "Top Views", "Top Likes", "WEB-VIEW", "IN-CHAT"];
+
+  const filteredGames = useMemo(() => {
+    const normalizedQuery = query.trim().toLowerCase();
+    const result = games.filter((game) => {
+      const matchSearch = !normalizedQuery || [game.title, game.description, game.author, game.category, ...game.tags]
+        .join(" ")
+        .toLowerCase()
+        .includes(normalizedQuery);
+      const matchCategory = category === "All" || game.category === category || game.tags.includes(category);
+      return matchSearch && matchCategory && matchesQuickFilter(game, quickFilter);
+    });
+
+    result.sort((a, b) => {
+      if (sortBy === "oldest") return new Date(a.createdAt) - new Date(b.createdAt);
+      if (sortBy === "views") return b.views - a.views;
+      if (sortBy === "likes") return b.likes - a.likes;
+      if (sortBy === "az") return a.title.localeCompare(b.title);
+      if (sortBy === "za") return b.title.localeCompare(a.title);
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    });
+
+    return result;
+  }, [category, query, quickFilter, sortBy]);
+
+  const visibleGames = filteredGames.slice(0, pageSize);
   const activeGame = games.find((game) => game.id === selected) ?? games[0];
   const ActiveComponent = gameComponents[activeGame.id] ?? TicTacToe;
 
@@ -395,85 +357,177 @@ export default function Home() {
     }, 80);
   };
 
+  const copyEndpoint = async () => {
+    try {
+      await navigator.clipboard.writeText(endpoint);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1400);
+    } catch {
+      setCopied(false);
+    }
+  };
+
+  const resetFilters = () => {
+    setQuery("");
+    setQuickFilter("Semua");
+    setCategory("All");
+    setSortBy("newest");
+    setPageSize(12);
+  };
+
   return (
-    <main className="page-shell">
-      <header className="topbar">
+    <main className="page-shell arcade-shell">
+      <header className="topbar arcade-topbar">
         <a className="brand" href="#top" aria-label="Game Arena home">
           <span className="brand-mark"><GameIcon name="portal" /></span>
           <span>
             <strong>Game Arena</strong>
-            <small>Mini game browser</small>
+            <small>Minigame arcade</small>
           </span>
         </a>
         <nav className="top-nav" aria-label="Navigasi utama">
-          <a href="#games">Game</a>
-          <a href="#play">Main</a>
+          <a href="#catalog">Catalog</a>
+          <a href="#play">Play</a>
           <ThemeToggle />
         </nav>
       </header>
 
-      <section id="top" className="hero">
-        <div className="hero-copy">
-          <p className="eyebrow">Ringan, cepat, tanpa login</p>
-          <h1>Mini game yang rapi, bukan template asal jadi.</h1>
-          <p className="hero-text">
-            Kumpulan game pendek untuk dimainkan langsung dari browser. Desainnya dibuat bersih, punya mode terang dan gelap, serta tetap nyaman di layar HP.
-          </p>
-          <div className="hero-actions">
-            <a className="button primary" href="#games">Pilih game</a>
-            <a className="button subtle" href="#play">Lanjut main</a>
+      <section id="top" className="arcade-hero">
+        <div className="arcade-title-block">
+          <div>
+            <p className="eyebrow">Browser arcade</p>
+            <h1>Minigame Arcade</h1>
+            <p className="hero-text">Katalog game ringan dengan filter, statistik, tampilan grid/list, dan mode terang-gelap. Main langsung dari browser tanpa login.</p>
+          </div>
+          <div className="hero-count-card">
+            <strong>{games.length}</strong>
+            <span>Games</span>
           </div>
         </div>
-        <aside className="hero-panel" aria-label="Ringkasan website">
-          <div className="showcase-card">
-            <div className="showcase-logo"><GameIcon name="portal" /></div>
-            <div>
-              <span className="label">Game Arena</span>
-              <strong>{games.length} mini game aktif</strong>
-              <p>SVG icon custom, transisi halus, dan tanpa aset berat.</p>
+
+        <div className="hero-actions arcade-actions">
+          <button className="button primary" type="button" onClick={() => document.getElementById("catalog")?.scrollIntoView({ behavior: "smooth" })}>Lihat catalog</button>
+          <button className="button subtle" type="button" onClick={() => window.alert("Slot upload game bisa ditambah nanti kalau kamu mau pakai database atau dashboard admin.")}>Game baru</button>
+        </div>
+      </section>
+
+      <section className="api-panel" aria-label="API games">
+        <div className="api-method">GET</div>
+        <div className="api-copy">
+          <span>API Minigames Raw JSON</span>
+          <code>{endpoint}</code>
+        </div>
+        <div className="api-actions">
+          <button className="button subtle small" type="button" onClick={copyEndpoint}>{copied ? "Tersalin" : "Salin URL"}</button>
+          <a className="button subtle small" href="#catalog">Docs API</a>
+        </div>
+      </section>
+
+      <section id="catalog" className="catalog-section">
+        <div className="control-panel">
+          <div className="tab-row primary-tabs" role="tablist" aria-label="Filter cepat">
+            {quickFilters.map((filter) => (
+              <button key={filter} type="button" className={cls("filter-chip", quickFilter === filter && "active")} onClick={() => setQuickFilter(filter)}>
+                {filter}
+              </button>
+            ))}
+          </div>
+
+          <div className="filter-grid">
+            <label className="search-field">
+              <span>Cari game</span>
+              <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Nama, author, kategori..." />
+            </label>
+            <label className="select-field">
+              <span>Urutan</span>
+              <select value={sortBy} onChange={(event) => setSortBy(event.target.value)}>
+                <option value="newest">Terbaru</option>
+                <option value="oldest">Terlama</option>
+                <option value="views">Terbanyak dimainkan</option>
+                <option value="likes">Paling disukai</option>
+                <option value="az">Abjad: A - Z</option>
+                <option value="za">Abjad: Z - A</option>
+              </select>
+            </label>
+            <label className="select-field">
+              <span>Tampil</span>
+              <select value={pageSize} onChange={(event) => setPageSize(Number(event.target.value))}>
+                <option value={6}>6 / hal</option>
+                <option value={12}>12 / hal</option>
+                <option value={24}>24 / hal</option>
+              </select>
+            </label>
+            <div className="view-toggle" aria-label="Mode tampilan">
+              <button type="button" className={viewMode === "grid" ? "active" : ""} onClick={() => setViewMode("grid")}>Grid</button>
+              <button type="button" className={viewMode === "list" ? "active" : ""} onClick={() => setViewMode("list")}>List</button>
             </div>
           </div>
-          <div className="mini-stats">
-            <Stat value="11" label="game" />
-            <Stat value="2" label="tema" />
-            <Stat value="0" label="login" />
-          </div>
-        </aside>
-      </section>
 
-      <section id="games" className="section-block">
-        <div className="section-heading">
-          <p className="eyebrow">Katalog</p>
-          <h2>Pilih satu, langsung main.</h2>
-          <p>Setiap kartu punya ritme permainan berbeda: strategi, refleks, puzzle, trivia, dan permainan santai.</p>
+          <div className="tab-row category-tabs" role="tablist" aria-label="Kategori game">
+            {categories.map((item) => (
+              <button key={item} type="button" className={cls("filter-chip", category === item && "active")} onClick={() => setCategory(item)}>
+                {item}
+              </button>
+            ))}
+          </div>
         </div>
 
-        <div className="game-grid">
-          {games.map((game) => (
-            <button
-              type="button"
-              key={game.id}
-              className={cls("game-card", selected === game.id && "active")}
-              onClick={() => chooseGame(game.id)}
-            >
-              <span className="game-icon"><GameIcon name={game.icon} /></span>
-              <span className="pill-row">
-                <span>{game.category}</span>
-                <span>{game.level}</span>
-              </span>
-              <strong>{game.title}</strong>
-              <small>{game.description}</small>
-            </button>
+        <div className="catalog-meta">
+          <div>
+            <strong>{formatNumber(filteredGames.length)} Games</strong>
+            <span>Menampilkan {filteredGames.length ? `1 - ${Math.min(pageSize, filteredGames.length)}` : "0"} dari {formatNumber(filteredGames.length)}</span>
+          </div>
+          <button className="button subtle small" type="button" onClick={resetFilters}>Segarkan</button>
+        </div>
+
+        <div className={cls("catalog-grid", viewMode === "list" && "list-mode")}> 
+          {visibleGames.map((game) => (
+            <article key={game.id} className={cls("arcade-card", selected === game.id && "active")}> 
+              <div className="card-topline">
+                <span className="card-logo"><GameIcon name={game.icon} /></span>
+                <div className="mode-stack">
+                  {game.modes.map((mode) => <span key={mode}>{mode}</span>)}
+                </div>
+              </div>
+
+              <div className="card-content">
+                <h3>{game.title}</h3>
+                <p className="card-author">{game.author} <span>•</span> {game.age}</p>
+                <p className="card-description">{game.description}</p>
+              </div>
+
+              <div className="card-tags">
+                {game.tags.slice(0, 3).map((tag) => <span key={tag}>{tag}</span>)}
+              </div>
+
+              <div className="card-stats" aria-label="Statistik game">
+                <span>{formatNumber(game.views)} views</span>
+                <span>{formatNumber(game.likes)} likes</span>
+              </div>
+
+              <div className="card-actions">
+                <button className="button primary small" type="button" onClick={() => chooseGame(game.id)}>Main</button>
+                <button className="button subtle small" type="button" onClick={() => chooseGame(game.id)}>Detail</button>
+              </div>
+            </article>
           ))}
         </div>
+
+        {!visibleGames.length && (
+          <div className="empty-state">
+            <strong>Tidak ada game yang cocok.</strong>
+            <p>Coba ubah kata kunci, kategori, atau filter cepat.</p>
+            <button className="button primary" type="button" onClick={resetFilters}>Reset filter</button>
+          </div>
+        )}
       </section>
 
-      <section id="play" className="play-section">
+      <section id="play" className="play-section arcade-play-section">
         <div className="play-header">
           <div className="play-title">
             <span className="play-icon"><GameIcon name={activeGame.icon} /></span>
             <div>
-              <p className="eyebrow">Sedang dimainkan</p>
+              <p className="eyebrow">Now playing</p>
               <h2>{activeGame.title}</h2>
               <p>{activeGame.description}</p>
             </div>
@@ -481,6 +535,7 @@ export default function Home() {
           <div className="play-badges">
             <span>{activeGame.category}</span>
             <span>{activeGame.level}</span>
+            {activeGame.modes.map((mode) => <span key={mode}>{mode}</span>)}
           </div>
         </div>
         <ActiveComponent key={activeGame.id} />
@@ -488,7 +543,7 @@ export default function Home() {
 
       <footer className="footer">
         <strong>Game Arena</strong>
-        <span>Dibuat untuk Vercel. Semua game berjalan di client, tanpa database.</span>
+        <span>Catalog layout terinspirasi arcade modern, dengan SVG icon dan tanpa emoji.</span>
       </footer>
     </main>
   );
