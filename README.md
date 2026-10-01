@@ -40,3 +40,4 @@ Tidak perlu konfigurasi tambahan.
 - Edit daftar game dan kartu di `app/page.jsx`.
 - Edit warna/desain di `app/globals.css`.
 - Ganti nama website pada `app/layout.jsx` dan bagian hero di `app/page.jsx`.
+update deploy
