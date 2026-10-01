@@ -54,3 +54,4 @@ Project ini juga punya endpoint JSON:
 - Edit komponen game di `app/page.jsx`.
 - Edit tampilan, animasi, dan warna tema di `app/globals.css`.
 - Edit metadata website di `app/layout.jsx`.
+trigger deploy latest
